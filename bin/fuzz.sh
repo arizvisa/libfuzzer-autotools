@@ -35,5 +35,8 @@ if [ ! -d "$artifacts" ]; then
     exit 1
 fi
 
+## Clean up some limits that are required by ASAN and libFuzzer
+ulimit -v unlimited
+
 ## Set it off
 exec "$p/$name.fuzzer" $run_args $fork_args "-artifact_prefix=$artifacts/" "$corpus" "$@"
