@@ -17,7 +17,7 @@ fi
 shift
 
 p=`dirname "$target"`
-name=`basename "$target" .out`
+name=`basename "$target" .fuzzer`
 corpus="$p/$name.corpus"
 artifacts="$p/$name.crash"
 
@@ -31,4 +31,4 @@ if [ ! -d "$artifacts" ]; then
     exit 1
 fi
 
-exec "$p/$name.out" $run_args $fork_args "-artifact_prefix=$artifacts/" "$corpus" "$@"
+exec "$p/$name.fuzzer" $run_args $fork_args "-artifact_prefix=$artifacts/" "$corpus" "$@"

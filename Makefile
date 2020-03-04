@@ -11,7 +11,7 @@ CXXFLAGS = -g -fno-omit-frame-pointer -O2 -fsanitize=fuzzer,address
 %.o: %.cc
 	$(CXXCOMPILE) -o $@ -c $<
 
-%.out: %.o
+%.fuzzer: %.o
 	-mkdir $(basename $@).corpus
 	-mkdir $(basename $@).crash
 	$(CXXLINK) $(foreach libpath,$(LIBPATH),-L$(libpath)/.libs) $(foreach lib,$(LIBS),-l$(lib)) $<
