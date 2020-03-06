@@ -5,6 +5,6 @@ include Makefile.inc
 include Makefile.config
 
 # Define some defaults that the user will likely use
-$(eval $(call setcompiler,COMPILE,%.c))
-$(eval $(call setcompiler,CXXCOMPILE,%.cc))
+$(eval $(call setcompiler,COMPILE,program,%.c))
+$(eval $(call setcompiler,CXXCOMPILE,program,%.cc))
 $(eval $(call setlinker,CXXLINK,program,$(LDADD)))

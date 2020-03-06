@@ -4,10 +4,10 @@ FUZZ_LDFLAGS = -g -fno-omit-frame-pointer -O2 -fsanitize=fuzzer,address
 
 ## Define some utility macros for helping out with dependencies
 
-# setcompiler(compile-var, pattern)
+# setcompiler(compile-var, name, pattern)
 define setcompiler
-%.$$(OBJEXT): $(2)
-	$$($(1)) $$(FUZZ_CFLAGS) -o $$@ -c $$<
+%.$$(OBJEXT): $(3)
+	CPATH=$($(2))_VPATH $$($(1)) $$(FUZZ_CFLAGS) -o $$@ -c $$<
 endef
 
 # setlinker(link-var, name, ladds)
