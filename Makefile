@@ -1,4 +1,5 @@
-MAKEDIR := $(dir $(firstword $(MAKEFILE_LIST)))
+MAKEDIR = $(dir $(firstword $(MAKEFILE_LIST)))
+VPATH = .
 
 # Include utility macros and user configuration
 include Makefile.inc
