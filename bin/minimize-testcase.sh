@@ -7,7 +7,7 @@ testcase="$3"
 ## Set some default parameters and validate what we received
 run_args="-verbosity=1 -print_final_stats=1"
 minimize_args="-minimize_crash=1"
-output_prefix="minimized-from"
+output_prefix="minimized"
 
 if [ $# -lt 3 ]; then
     printf "Usage: %s target count testcase [parameters...]\n" "$arg0"
