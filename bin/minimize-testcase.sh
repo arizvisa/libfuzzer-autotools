@@ -7,6 +7,7 @@ testcase="$3"
 ## Set some default parameters and validate what we received
 run_args="-verbosity=1 -print_final_stats=1"
 minimize_args="-minimize_crash=1"
+output_prefix="minimized-from"
 
 if [ $# -lt 3 ]; then
     printf "Usage: %s target count testcase [parameters...]\n" "$arg0"
@@ -62,8 +63,15 @@ if [ "$count" -lt 1 ]; then
     exit 1
 fi
 
+## Check the output path and make sure it doesn't already exist
+output_f="$output_prefix.$testcase_f"
+if [ -e "$output/$output_f" ]; then
+    printf "%s: The output file for the specified testcase (%s) already exists: %s\n" "$arg0" "$artifacts/$testcase_f" "$output/$output_f"
+    exit 1
+fi
+
 ## Clean up some limits that are required by ASAN and libFuzzer
 ulimit -v unlimited
 
 ## Set it off
-exec "$p/$name.fuzzer" $run_args $minimize_args "-artifact_prefix=$output/" "-runs=$count" "$artifacts/$testcase_f" "$@"
+exec "$p/$name.fuzzer" $run_args $minimize_args "-exact_artifact_path=$output/$output_f" "-runs=$count" "$artifacts/$testcase_f" "$@"
