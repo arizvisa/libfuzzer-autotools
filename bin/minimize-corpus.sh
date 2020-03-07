@@ -4,7 +4,8 @@ target="$1"
 new="$2"
 
 ## Set some default parameters and validate what we received
-run_args="-verbosity=1 -print_final_stats=1 -merge=1"
+run_args="-verbosity=1 -print_final_stats=1"
+minimize_args="-merge=1"
 
 if [ $# -lt 2 ]; then
     printf "Usage: %s target new-corpus [parameters...]\n" "$arg0"
@@ -21,7 +22,7 @@ if [ ! -x "$p/$name.fuzzer" ]; then
 fi
 shift 2
 
-## Identify the corpus and artifact directoriees and make sure they exist
+## Identify the corpus and target directories and make sure they exist
 corpus="$p/$name.corpus"
 
 if [ ! -d "$corpus" ]; then
@@ -38,4 +39,4 @@ fi
 ulimit -v unlimited
 
 ## Set it off
-exec "$p/$name.fuzzer" $run_args "$new" "$corpus" "$@"
+exec "$p/$name.fuzzer" $run_args $minimize_args "$new" "$corpus" "$@"
