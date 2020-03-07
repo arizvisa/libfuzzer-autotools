@@ -14,10 +14,14 @@ if [ $# -lt 3 ]; then
 fi
 shift 3
 
-## Identify the artifact and output directory and make sure they exist
+## Set the variables we will use
+p=`dirname "$target"`
+name=`basename "$target"`
+
 artifacts="$p/$name.crash"
 output="$p/$name.output"
 
+## Identify the artifact and output directory and make sure they exist
 if [ ! -d "$artifacts" ]; then
     printf "%s: Artifact directory does not exist: %s\n" "$arg0" "$artifacts"
     exit 1
@@ -30,9 +34,6 @@ fi
 
 
 ## Figure out the actual target and make sure that it's well-formed
-p=`dirname "$target"`
-name=`basename "$target"`
-
 if [ ! -x "$p/$name.fuzzer" ]; then
     printf "%s: Unable to run requested fuzzer (%s): %s\n" "$arg0" "$target" "$p/$name"
     exit 1
