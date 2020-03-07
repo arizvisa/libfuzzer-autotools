@@ -66,4 +66,4 @@ fi
 ulimit -v unlimited
 
 ## Set it off
-exec "$p/$name.fuzzer" $run_args $minimize_args "--artifact_prefix=$output/" "-runs=$count" "$artifacts/$testcase_f" "$@"
+exec "$p/$name.fuzzer" $run_args $minimize_args "-artifact_prefix=$output/" "-runs=$count" "$artifacts/$testcase_f" "$@"
