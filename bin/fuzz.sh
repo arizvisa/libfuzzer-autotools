@@ -21,7 +21,7 @@ if [ ! -x "$p/$name.fuzzer" ]; then
 fi
 shift
 
-## Identify the corpus and artifact directoriees and make sure they exist
+## Identify the corpus and artifact directories and make sure they exist
 corpus="$p/$name.corpus"
 artifacts="$p/$name.crash"
 
