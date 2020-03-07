@@ -18,7 +18,7 @@ p=`dirname "$target"`
 name=`basename "$target"`
 
 if [ ! -x "$p/$name.fuzzer" ]; then
-    printf "%s: Unable to run requested executable: %s\n" "$arg0" "$target"
+    printf "%s: Unable to run requested fuzzer (%s): %s\n" "$arg0" "$target" "$p/$name"
     exit 1
 fi
 
