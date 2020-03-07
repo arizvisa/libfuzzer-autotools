@@ -11,6 +11,7 @@ if [ $# -lt 2 ]; then
     printf "Usage: %s target new-corpus [parameters...]\n" "$arg0"
     exit 0
 fi
+shift 2
 
 ## Figure out the actual target and make sure that it's well-formed
 p=`dirname "$target"`
@@ -20,7 +21,6 @@ if [ ! -x "$p/$name.fuzzer" ]; then
     printf "%s: Unable to run requested executable: %s\n" "$arg0" "$target"
     exit 1
 fi
-shift 2
 
 ## Identify the corpus and target directories and make sure they exist
 corpus="$p/$name.corpus"
