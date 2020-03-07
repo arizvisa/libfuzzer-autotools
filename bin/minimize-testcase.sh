@@ -32,16 +32,22 @@ if [ ! -d "$output" ]; then
     exit 1
 fi
 
-
 ## Figure out the actual target and make sure that it's well-formed
 if [ ! -x "$p/$name.fuzzer" ]; then
     printf "%s: Unable to run requested fuzzer (%s): %s\n" "$arg0" "$target" "$p/$name"
     exit 1
 fi
 
+## Check if the testcase includes a directory, and remove it if so
+testcase_d=`dirname "$testcase"`
+testcase_f=`basename "$testcase"`
+if [ ! -z "$testcase_d" ]; then
+    printf "%s: Removing the directory (%s) from the specified testcase: %s\n" "$arg0" "$testcase_d" "$testcase"
+fi
+
 ## Validate the count and verify that the testcase exists
-if [ ! -f "$artifacts/$testcase" ]; then
-    printf "%s: The specified testcase does not exist (%s): %s\n" "$arg0" "$testcase" "$artifacts/$testcase"
+if [ ! -f "$artifacts/$testcase_f" ]; then
+    printf "%s: The specified testcase does not exist (%s): %s\n" "$arg0" "$testcase_f" "$artifacts/$testcase_f"
     exit 1
 fi
 
@@ -60,4 +66,4 @@ fi
 ulimit -v unlimited
 
 ## Set it off
-exec "$p/$name.fuzzer" $run_args $minimize_args "--artifact_prefix=$output/" "-runs=$count" "$artifacts/$testcase" "$@"
+exec "$p/$name.fuzzer" $run_args $minimize_args "--artifact_prefix=$output/" "-runs=$count" "$artifacts/$testcase_f" "$@"
