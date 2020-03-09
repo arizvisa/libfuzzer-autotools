@@ -25,7 +25,7 @@ endef
 # link(link-var, target, ldeps, ladds, rbase, robjs-var, radds-var, rdeps-var)
 define link
 $(2): $(3)
-	cd '$($(2)_VPATH)' && $$($(1)) $$(FUZZ_LDFLAGS) \
+	cd '$(5)' && $$($(1)) $$(FUZZ_LDFLAGS) \
 	$$(foreach item,$$($(7)),$$(if $$(filter-out -%,$$(item)),$(5)/$$(item),$$(item))) \
 	$$(foreach object,$$($(6)),$(5)/$$(object)) \
 	$$(foreach dependency,$$($(8)),$(5)/$$(dependency)) \
