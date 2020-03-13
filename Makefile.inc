@@ -67,6 +67,15 @@ VPATH = $$(patsubst %/,%,$$(dir $(2))):$$(value VPATH)
 endif
 
 -include $(2)
+
+$(foreach sanitizer,$(SANITIZER_TYPE),$$(eval $$(call build,$(1).$(sanitizer),$(dir $(2)),$$(INTERNAL_CFLAGS) -fsanitize=$(sanitizer),$$(INTERNAL_LDFLAGS) -fsanitize=$(sanitizer))))
+endef
+
+# build(name, path, cflags, ldflags)
+define build
+.PHONY: $(1)
+$(1): $$(patsubst %/,%,$(2))
+	$$(MAKE) -B -C "$$<" CFLAGS="$(3)" CXXFLAGS="$(3)" LDFLAGS="$(4)"
 endef
 
 # make_directory(target, dependencies)
