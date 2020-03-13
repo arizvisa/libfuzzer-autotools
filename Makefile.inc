@@ -39,7 +39,7 @@ endef
 define setlinker
 $$(eval $$(call link,$(1),%.fuzzer,%.o,$(3),$$(realpath $$($(2)_VPATH)),$(2)_OBJECTS,$(2)_LDADD,$(2)_DEPENDENCIES))
 
-$$(foreach sanitizer,$$(SANITIZER_TYPE),$$(eval $$(call link,$(1),%.$(sanitizer),%.o,-fsanitize=$(sanitize) $(3),$$(realpath $$($(2)_VPATH)),$(2)_OBJECTS,$(2)_LDADD,$(2)_DEPENDENCIES)))
+$(foreach sanitizer,$(SANITIZER_TYPE),$$(eval $$(call link,$(1),%.$(sanitizer),%.o,-fsanitize=$(sanitizer) $(3),$$(realpath $$($(2)_VPATH)),$(2)_OBJECTS,$(2)_LDADD,$(2)_DEPENDENCIES)))
 endef
 
 # compile(compile-var, target, cdeps, cadds, rbase)
