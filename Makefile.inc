@@ -58,8 +58,8 @@ $(2): $(3)
 	$(4) $$(addprefix $$(MAKEDIR_PREFIX),$$^) -o '$$(MAKEDIR_PREFIX)$$@'
 endef
 
-# remote_include(name, path)
-define remote_include
+# autoinclude(name, path)
+define autoinclude
 ifeq ($$(value VPATH),)
 VPATH = $$(patsubst %/,%,$$(dir $(2)))
 else
@@ -68,11 +68,11 @@ endif
 
 -include $(2)
 
-$(foreach sanitizer,$(SANITIZER_TYPE),$$(eval $$(call build,$(1).$(sanitizer),$(dir $(2)),$$(INTERNAL_CFLAGS) -fsanitize=$(sanitizer),$$(INTERNAL_LDFLAGS) -fsanitize=$(sanitizer))))
+$(foreach sanitizer,$(SANITIZER_TYPE),$$(eval $$(call autobuild,$(1).$(sanitizer),$(dir $(2)),$$(INTERNAL_CFLAGS) -fsanitize=$(sanitizer),$$(INTERNAL_LDFLAGS) -fsanitize=$(sanitizer))))
 endef
 
-# build(name, path, cflags, ldflags)
-define build
+# autobuild(name, path, cflags, ldflags)
+define autobuild
 .PHONY: $(1)
 $(1): $$(patsubst %/,%,$(2))
 	$$(MAKE) -B -C "$$<" CFLAGS="$(3)" CXXFLAGS="$(3)" LDFLAGS="$(4)"
