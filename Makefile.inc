@@ -17,8 +17,11 @@ $(if $(filter-out 0 1,$(call coerce_boolean,$(1))),$(error unexpected non-boolea
 endef
 
 ## Clang sanitizers
-COVERAGE = -fprofile-instr-generate -fcoverage-mapping
 SANITIZERS = integer bounds
+SANITIZER_TYPE = address safe-stack
+
+## Clang coverage
+COVERAGE = -fprofile-instr-generate -fcoverage-mapping
 
 ## Assign the cflags and ldflags for libfuzzer
 INTERNAL_CFLAGS  = $(FUZZ_CFLAGS) -fsanitize=$(subst $(space),$(comma),$(SANITIZERS))
@@ -35,6 +38,8 @@ endef
 # setlinker(link-var, name, ladds)
 define setlinker
 $$(eval $$(call link,$(1),%.fuzzer,%.o,$(3),$$(realpath $$($(2)_VPATH)),$(2)_OBJECTS,$(2)_LDADD,$(2)_DEPENDENCIES))
+
+$$(foreach sanitizer,$$(SANITIZER_TYPE),$$(eval $$(call link,$(1),%.$(sanitizer),%.o,-fsanitize=$(sanitize) $(3),$$(realpath $$($(2)_VPATH)),$(2)_OBJECTS,$(2)_LDADD,$(2)_DEPENDENCIES)))
 endef
 
 # compile(compile-var, target, cdeps, cadds, rbase)
