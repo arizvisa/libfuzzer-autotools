@@ -12,14 +12,19 @@ if [ $# -lt 1 ]; then
 fi
 shift
 
+## Figure out the sanitizer type
+class=`echo "$target" | rev | cut -d. -f1 | rev`
+
 ## Figure out the actual target and make sure that it's well-formed
 p=`dirname "$target"`
-name=`basename "$target"`
+name=`basename "$target" ".$class"`
 
-if [ ! -x "$p/$name.fuzzer" ]; then
+if [ ! -x "$p/$name.$class" ]; then
     printf "%s: Unable to run requested fuzzer (%s): %s\n" "$arg0" "$target" "$p/$name"
     exit 1
 fi
+
+printf "%s: Found sanitizer type: %s\n" "$arg0" "$class"
 
 ## Identify the corpus and artifact directories and make sure they exist
 corpus="$p/$name.corpus"
@@ -39,4 +44,4 @@ fi
 ulimit -v unlimited
 
 ## Set it off
-exec "$p/$name.fuzzer" $run_args $fork_args "-artifact_prefix=$artifacts/" "$corpus" "$@"
+exec "$p/$name.$class" $run_args $fork_args "-artifact_prefix=$artifacts/" "$corpus" "$@"

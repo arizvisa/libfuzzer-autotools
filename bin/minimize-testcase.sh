@@ -15,14 +15,25 @@ if [ $# -lt 3 ]; then
 fi
 shift 3
 
+## Figure out the sanitizer type
+class=`echo "$target" | rev | cut -d. -f1 | rev`
+
 ## Set the variables we will use
 p=`dirname "$target"`
-name=`basename "$target"`
+name=`basename "$target" ".$class"`
 
+## Figure out the actual target and make sure that it's well-formed
+if [ ! -x "$p/$name.$class" ]; then
+    printf "%s: Unable to run requested fuzzer (%s): %s\n" "$arg0" "$target" "$p/$name"
+    exit 1
+fi
+
+printf "%s: Found sanitizer type: %s\n" "$arg0" "$class"
+
+## Identify the artifact and output directory and make sure they exist
 artifacts="$p/$name.crash"
 output="$p/$name.output"
 
-## Identify the artifact and output directory and make sure they exist
 if [ ! -d "$artifacts" ]; then
     printf "%s: Artifact directory does not exist: %s\n" "$arg0" "$artifacts"
     exit 1
@@ -30,12 +41,6 @@ fi
 
 if [ ! -d "$output" ]; then
     printf "%s: Output directory for minimization does not exist: %s\n" "$arg0" "$output"
-    exit 1
-fi
-
-## Figure out the actual target and make sure that it's well-formed
-if [ ! -x "$p/$name.fuzzer" ]; then
-    printf "%s: Unable to run requested fuzzer (%s): %s\n" "$arg0" "$target" "$p/$name"
     exit 1
 fi
 
@@ -74,4 +79,4 @@ fi
 ulimit -v unlimited
 
 ## Set it off
-exec "$p/$name.fuzzer" $run_args $minimize_args "-exact_artifact_path=$output/$output_f" "-runs=$count" "$artifacts/$testcase_f" "$@"
+exec "$p/$name.$class" $run_args $minimize_args "-exact_artifact_path=$output/$output_f" "-runs=$count" "$artifacts/$testcase_f" "$@"
