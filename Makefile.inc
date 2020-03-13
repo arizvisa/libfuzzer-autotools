@@ -1,21 +1,24 @@
-MAKEDIR_PREFIX := $(realpath $(MAKEDIR))/
+## Clang sanitizers
+COVERAGE = -fprofile-instr-generate -fcoverage-mapping
+SANITIZERS = integer bounds
 
 ## Assign the cflags and ldflags for libfuzzer
-FUZZ_CFLAGS = -g -fno-omit-frame-pointer -O2 -fsanitize=fuzzer,address
-FUZZ_LDFLAGS = -g -fno-omit-frame-pointer -O2 -fsanitize=fuzzer,address
+INTERNAL_CFLAGS  = $(FUZZ_CFLAGS) -fsanitize=$(subst $(space),$(comma),$(SANITIZERS))
+INTERNAL_LDFLAGS = $(FUZZ_LDFLAGS) -fsanitize=$(subst $(space),$(comma),$(SANITIZERS))
 
 ## Define some utility macros for helping out with dependencies
+MAKEDIR_PREFIX := $(realpath $(MAKEDIR))/
 
 # setcompiler(compile-var, name, pattern)
 define setcompiler
 %.$$(OBJEXT): $(3)
-	cd '$($(2)_VPATH)' && $$($(1)) $$(FUZZ_CFLAGS) -o '$$(MAKEDIR_PREFIX)$$@' -c '$$(MAKEDIR_PREFIX)$$<'
+	cd '$($(2)_VPATH)' && $$($(1)) $$(INTERNAL_CFLAGS) -o '$$(MAKEDIR_PREFIX)$$@' -c '$$(MAKEDIR_PREFIX)$$<'
 endef
 
 # setlinker(link-var, name, ladds)
 define setlinker
 %.fuzzer: %.o
-	cd '$($(2)_VPATH)' && $$($(1)) $$(FUZZ_LDFLAGS) \
+	cd '$($(2)_VPATH)' && $$($(1)) $$(INTERNAL_LDFLAGS) \
 	$$(foreach item,$$($(2)_LDADD),$$(if $$(filter-out -%,$$(item)),$(realpath $($(2)_VPATH))/$$(item),$$(item))) \
 	$$(foreach object,$$($(2)_OBJECTS),$(realpath $($(2)_VPATH))/$$(object)) \
 	$$(foreach object,$$($(2)_DEPENDENCIES),$(realpath $($(2)_VPATH))/$$(object)) \
@@ -25,7 +28,7 @@ endef
 # link(link-var, target, ldeps, ladds, rbase, robjs-var, radds-var, rdeps-var)
 define link
 $(2): $(3)
-	cd '$(5)' && $$($(1)) $$(FUZZ_LDFLAGS) \
+	cd '$(5)' && $$($(1)) $$(INTERNAL_LDFLAGS) \
 	$$(foreach item,$$($(7)),$$(if $$(filter-out -%,$$(item)),$(5)/$$(item),$$(item))) \
 	$$(foreach object,$$($(6)),$(5)/$$(object)) \
 	$$(foreach dependency,$$($(8)),$(5)/$$(dependency)) \
@@ -48,4 +51,3 @@ define make_directory
 $(1): $(2)
 	@test -d '$$@' || mkdir -p '$$@'
 endef
-
