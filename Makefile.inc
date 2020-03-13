@@ -75,7 +75,7 @@ endef
 define autobuild
 .PHONY: $(1)
 $(1): $$(patsubst %/,%,$(2))
-	$$(MAKE) -B -C "$$<" CFLAGS="$(3)" CXXFLAGS="$(3)" LDFLAGS="$(4)"
+	$$(MAKE) -B -C '$$<' 'CFLAGS=$(3)' 'CXXFLAGS=$(3)' 'LDFLAGS=$(4)'
 endef
 
 # make_directory(target, dependencies)
