@@ -29,13 +29,18 @@ MAKEDIR_PREFIX := $(realpath $(MAKEDIR))/
 
 # setcompiler(compile-var, name, pattern)
 define setcompiler
-%.$$(OBJEXT): $(3)
-	cd '$($(2)_VPATH)' && $$($(1)) $$(INTERNAL_CFLAGS) -o '$$(MAKEDIR_PREFIX)$$@' -c '$$(MAKEDIR_PREFIX)$$<'
+$$(eval $$(call compile,$(1),%.$$(OBJEXT),$(3),,$$($(2)_VPATH)))
 endef
 
 # setlinker(link-var, name, ladds)
 define setlinker
 $$(eval $$(call link,$(1),%.fuzzer,%.o,$(3),$$(realpath $$($(2)_VPATH)),$(2)_OBJECTS,$(2)_LDADD,$(2)_DEPENDENCIES))
+endef
+
+# compile(compile-var, target, cdeps, cadds, rbase)
+define compile
+$(2): $(3)
+	cd '$(5)' && $$($(1)) $$(INTERNAL_CFLAGS) $(4) -o '$$(MAKEDIR_PREFIX)$$@' -c '$$(MAKEDIR_PREFIX)$$<'
 endef
 
 # link(link-var, target, ldeps, ladds, rbase, robjs-var, radds-var, rdeps-var)
