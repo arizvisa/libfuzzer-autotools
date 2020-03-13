@@ -35,12 +35,7 @@ endef
 
 # setlinker(link-var, name, ladds)
 define setlinker
-%.fuzzer: %.o
-	cd '$($(2)_VPATH)' && $$($(1)) $$(INTERNAL_LDFLAGS) \
-	$$(foreach item,$$($(2)_LDADD),$$(if $$(filter-out -%,$$(item)),$(realpath $($(2)_VPATH))/$$(item),$$(item))) \
-	$$(foreach object,$$($(2)_OBJECTS),$(realpath $($(2)_VPATH))/$$(object)) \
-	$$(foreach object,$$($(2)_DEPENDENCIES),$(realpath $($(2)_VPATH))/$$(object)) \
-	$(3) $$(addprefix $$(MAKEDIR_PREFIX),$$^) -o '$$(MAKEDIR_PREFIX)$$@'
+$$(eval $$(call link,$(1),%.fuzzer,%.o,$(3),$$(realpath $$($(2)_VPATH)),$(2)_OBJECTS,$(2)_LDADD,$(2)_DEPENDENCIES))
 endef
 
 # link(link-var, target, ldeps, ladds, rbase, robjs-var, radds-var, rdeps-var)
