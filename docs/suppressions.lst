@@ -1,0 +1,15 @@
+unsigned-integer-overflow
+implicit-signed-integer-truncation
+pointer-overflow
+unsigned-integer-overflow
+integer-divide-by-zero
+float-divide-by-zero
+invalid-builtin-use
+implicit-integer-sign-change
+float-cast-overflow
+undefined
+unreachable
+vla-bound
+returns-nonnull-attribute
+implicit-unsigned-integer-truncation
+implicit-signed-integer-truncation
