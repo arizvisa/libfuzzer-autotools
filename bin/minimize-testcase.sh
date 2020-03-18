@@ -79,4 +79,27 @@ fi
 ulimit -v unlimited
 
 ## Set it off
-exec "$p/$name.$class" $run_args $minimize_args "-exact_artifact_path=$output/$output_f" "-runs=$count" "$artifacts/$testcase_f" "$@"
+"$p/$name.$class" $run_args $minimize_args "-exact_artifact_path=$output/$output_f" "-runs=$count" "$artifacts/$testcase_f" "$@"
+if [ "$?" -ne "0" ]; then
+    printf "%s: There was a failure minimizing the specified testcase (%s): %s\n" "$arg0" "$artifacts/$testcase_f" "$output/$output_f"
+    exit 1
+fi
+
+## Now we can rename the reduced testcase to its hash
+newname=`openssl dgst -sha1 -r "$output/$output_f" | cut -d' ' -f1`
+
+# If the newname already exists, then this is a dupe
+if [ -e "$output/$newname" ]; then
+    printf "%s: Found duplicate testcase for %s: %s\n" "$arg0" "$output/$newname" "$artifacts/$testcase_f"
+    printf "%s\n" "$artifacts/$testcase_f" >> "$output/$newname.log"
+    rm -f "$output/$output_f"
+
+# Otherwise, we have a new sample and we need to ensure the timestamps match the source
+else
+    printf "%s: Found new sample for %s: %s\n" "$arg0" "$output/$newname" "$artifacts/$testcase_f"
+    printf "%s\n" "$artifacts/$testcase_f" >> "$output/$newname.log"
+    mv -f "$output/$output_f" "$output/$newname.sample"
+    touch -r "$artifacts/$testcase_f" "$output/$newname.sample"
+fi
+
+exit 0
